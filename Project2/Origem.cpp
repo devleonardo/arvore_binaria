@@ -1,63 +1,80 @@
-#include<stdlib.h>
-#include<stdio.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define TAM 50
-#define RU 10
+typedef struct {
+	int RU;
+	char nome[50], email[50];
+}Aluno;
 
-struct Alunos {
-	int ru;
-	char nome[TAM];
-	struct Alunos* direita, * esquerda;
-};
-struct Alunos all[RU] = {
-	{1,"Leonardo"},
-	{2,"Layla"},
-	{3,"Edson"}
-};
+/*Aluno allu[10] = {
+	{2771700, "Leonardo", "leonardo@gmail.com"},
+	{2771701, "Layla", "layla@gmail.com"},
+	{2771702, "Edson", "edson@gmail.com"}
+};*/
+
+typedef struct Arvore{
+	Aluno alu;
+	struct Arvore* esq, * dir;
+} Arv;
 
 int menu();
-void Inserir(Alunos** ElementoVarredura, int rus, char nomes[TAM]);
-Alunos* Buscar(Alunos** ElementoVarredura, int rus, char nomes[TAM]);
+void Incluir(Arv** folha, Aluno alu);
+void Buscar(Arv* folha, int p);
+void Exibir(Arv* folha);
 
 int main() {
-	int op, c;
-	int rus;
-	char nomes[TAM];
 
-	Alunos* root;
-	root = (Alunos*)malloc(sizeof(Alunos));
-	root = NULL;
-
-	Alunos* ElementoBusca;
-	ElementoBusca = (Alunos*)malloc(sizeof(Alunos));
+	Arv* folha = NULL;
+	Aluno alu;
+	int opc, retorno = 0, c;
+	int p;
 
 	while (1) {
-		op = menu();
-		switch (op) {
+		opc = menu();
+		switch (opc) {
 		case 1:
-			printf("Digite o RU do aluno: ");
-			scanf_s("%d", &rus);
-			while ((c = getchar()) != '\n' && c != EOF) {} // sempre limpe o buffer do teclado.
-			printf("Digite o nome do aluno: ");
-			fgets(nomes, 50, stdin);
-			Inserir(&root, rus, nomes);
+			printf("\n\n");
+			printf("=========================================\n");
+			printf("|           Cadastro de Aluno           |\n");
+			printf("=========================================\n");
+
+			printf("|  Informe o RU: ");
+			scanf_s("%d", &alu.RU);
+			while ((c = getchar()) != '\n' && c != EOF) {}
+
+			printf("|  Informe o Nome: ");
+			fgets(alu.nome, 50, stdin);
+
+			printf("|  Informe o Email: ");
+			fgets(alu.email, 50, stdin);
+
+			Incluir(&folha, alu);
 			break;
 		case 2:
-			printf("Digite o RU a ser buscado: ");
-			scanf_s("%d", &rus);
-			while ((c = getchar()) != '\n' && c != EOF) {} // sempre limpe o buffer do teclado.
-			ElementoBusca = Buscar(&root, rus, nomes);
-			if (ElementoBusca != 0) {
-				printf("\nRegistro encontrado!\n");
-				printf("  \nRU: %d\n", rus);
-				printf("Nome: %s\n", nomes);
-			}
-			else
-				printf("Registro nao encontrado!\n");
+			printf("\n\n");
+			printf("=========================================\n");
+			printf("|           Listagem de Aluno           |\n");
+			printf("=========================================\n");
+			Exibir(folha);
 			system("pause");
 			break;
 		case 3:
+			printf("\n\n");
+			printf("==========================================\n");
+			printf("|            Conulta de Aluno            |\n");
+			printf("==========================================\n");
+
+			printf("|  Informe o RU: ");
+			scanf_s("%d", &alu.RU);
+			while ((c = getchar()) != '\n' && c != EOF) {}
+
+			p = alu.RU;
+
+			Buscar(folha, p);
+			system("pause");
+			break;
+		case 4:
 			return 0;
 		default:
 			printf("Opcao invalida\n");
@@ -67,69 +84,75 @@ int main() {
 }
 
 int menu() {
-	int op, c;
+	int opc, c;
 	system("Cls");
+	printf("\n\n");
+	printf("========================================\n");
+	printf("|                 MENU                 |\n");
+	printf("|======================================|\n");
+	printf("|     1 - Cadastrar novo aluno         |\n");
+	printf("|     2 - Listar todos os alunos       |\n");
+	printf("|     3 - Buscar aluno              |\n");
+	printf("|                                      |\n");
+	printf("|     4 - Sair                         |\n");
+	printf("========================================\n\n");
 
-	printf("1. Cadastrar novo aluno\n");
-	printf("2. Buscar aluno\n");
-	printf("3.Sair\n\n");
-	printf("Digite sua escolha: ");
-
-	scanf_s("%d", &op);
+	printf("|     Digite sua escolha: ");
+	scanf_s("%d", &opc);
 	while ((c = getchar()) != '\n' && c != EOF) {} // sempre limpe o buffer do teclado.
 
 	system("Cls");
-	return op;
+	return opc;
 }
 
-void Inserir(Alunos** ElementoVarredura, int rus, char nomes[TAM]) {
+void Incluir(Arv** folha, Aluno alu) {
+	if (*folha == NULL) {
+		*folha = (Arv*)malloc(sizeof(Arv));
+		(*folha)->dir = NULL;
+		(*folha)->esq = NULL;
+		(*folha)->alu = alu;
+	}
+	else {
+		if (((*folha)->alu.RU) < alu.RU)
+			Incluir(&(*folha)->esq, alu);
+		else if (((*folha)->alu.RU) > alu.RU)
+			Incluir(&(*folha)->dir, alu);
+		else if (((*folha)->alu.RU) == alu.RU) {
+			printf("\nAluno ja cadastrado.\n\n");
+			system("pause");
+		}
+	}
+}
 
-	if (*ElementoVarredura == NULL)
-	{ //SE ESTÁ VAZIO, COLOCA NA ÁRVORE
-		Alunos* NovoElemento = NULL;
-		NovoElemento = (Alunos*)malloc(sizeof(Alunos));
-		NovoElemento->esquerda = NULL;
-		NovoElemento->direita = NULL;
-
-		NovoElemento->ru = rus;
-		NovoElemento->nome[TAM] = nomes[TAM];
-		*ElementoVarredura = NovoElemento;
-
+void Buscar(Arv* folha, int p) {
+	if (folha == NULL) {
+		printf("\n");
+		printf("|  Aluno nao cadastrado!\n\n");		
+		return;		
+	}
+	if ((folha->alu.RU, p) == folha->alu.RU) {
+		printf("==========================================\n");
+		printf("|  RU: %d\n", folha->alu.RU);
+		printf("|  Nome: %s", folha->alu.nome);
+		printf("|  Email: %s", folha->alu.email);
+		printf("==========================================\n");
 		return;
 	}
-
-	if (rus < (*ElementoVarredura)->ru)
-	{
-		Inserir(&(*ElementoVarredura)->esquerda, rus, nomes);
-	}
-	else
-	{
-		if (rus > (*ElementoVarredura)->ru)
-		{
-			Inserir(&(*ElementoVarredura)->direita, rus, nomes);
-		}
-	}
+	Buscar(folha->esq, p);
+	Buscar(folha->dir, p);
 }
 
-Alunos* Buscar(Alunos** ElementoVarredura, int rus, char nomes[TAM])
-{
-	if (*ElementoVarredura == NULL)
-		return NULL;
-
-	if (rus < (*ElementoVarredura)->ru)
-	{
-		Buscar(&((*ElementoVarredura)->esquerda), rus, nomes);
+void Exibir(Arv* folha) {
+	if (folha == NULL)
+		return;
+	else {
+		printf("=========================================\n");
+		printf("|  RU: %d\n", folha->alu.RU);
+		printf("|  Nome: %s", folha->alu.nome);
+		printf("|  Email: %s", folha->alu.email);
+		printf("=========================================\n");
+		Exibir(folha->esq);
+		Exibir(folha->dir);
 	}
-	else
-	{
-		if (rus > (*ElementoVarredura)->ru)
-		{
-			Buscar(&((*ElementoVarredura)->direita), rus, nomes);
-		}
-		else
-		{
-			if (rus == (*ElementoVarredura)->ru)
-				return *ElementoVarredura;
-		}
-	}
+	printf("\n");
 }
