@@ -1,24 +1,40 @@
+/* ÁVORE BINÁRIA - BST */
+
+/* Sua escolha é devido a sua facilidade na busca de dados, uma vez
+que ela se compara com a busca binaria. A diferença de desempenho
+esta na inserção dos dados. Ambos aprensentam  para o BigO a complexidade
+O(logn), porém, a busca binaria em uma lista encadeada exige que
+o conjunto de dados ja esteja ordenado, caso contrario, devera fazer
+a ordenação primeiro. A ÁVORE BINÁRIA tem a sua inserção de dados
+de forma organizada.
+Dados de valores menores a esquerda de um nó pai e maiores a direita. */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 // Macro
 #define TAM 50
+
 // Estrutura heterogenea de dados
 typedef struct {
 	int RU;
 	char nome[TAM];
 	char email[TAM];
 }Aluno;
+
 // Arvore
 typedef struct Arvore{
 	Aluno alu;
 	struct Arvore* esq, * dir;
 } Arv;
+
 // Prototipos
 void menu();
 void Incluir(Arv** folha, Aluno alu);
 void Buscar(Arv* folha, int ru);
 void Exibir(Arv* folha);
+
 // Inicio da execução da aplicação
 int main() {
 	// Atribui a ARVORE a um ponteiro e inicializa NULL
@@ -88,6 +104,7 @@ int main() {
 	}
 	return 0;
 }
+
 // Função que imprime o menu
 void menu() {
 	system("Cls");
@@ -102,6 +119,7 @@ void menu() {
 	printf("|     4 - Sair                         |\n");
 	printf("========================================\n\n");
 }
+
 // Função que cadastra o aluno na árvore
 void Incluir(Arv** folha, Aluno alu) {
 	// Aloca a ARVORE na memoria e cria NO
@@ -111,6 +129,7 @@ void Incluir(Arv** folha, Aluno alu) {
 		(*folha)->esq = NULL;
 		(*folha)->alu = alu;
 	}
+
 	/* Cadastra de acordo com o valor da RAIZ.
 	Se o RU a ser cadastrado for menor que a RAIZ,
 	inserir a esquerda. Se o RU a ser cadastrado
@@ -127,6 +146,7 @@ void Incluir(Arv** folha, Aluno alu) {
 		}
 	}
 }
+
 // Função que reaiza a busca do aluno na ARVORE
 void Buscar(Arv* folha, int ru) {
 	/* Se o NO folha pesquisado for NULL
@@ -154,6 +174,7 @@ void Buscar(Arv* folha, int ru) {
 	else
 		Buscar(folha->esq, ru);
 }
+
 /* Exibe a lista completa dos alunos
 cadastrados em ordem crescente de cima para baixo. */
 void Exibir(Arv* folha) {
